@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Fizz Buzz</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+  new Vue({
+    el: "#app",
+    data() {
+      return {
+        start: 1,
+        count: 10,
+        results: [],
+        isLoading: false
+      };
+    },
+    methods: {
+      async onSubmit() {
+        this.isLoading = true;
+        try {
+          const response = await axios.get(
+            `https://prod-212.westeurope.logic.azure.com/workflows/541ebbd806b54cba890488437b2b08ba/triggers/manual/paths/invoke/FizzBuzz/start/${this.start}/count/${this.count}?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XXX`
+          );
+          this.results = response.data;
+        } catch (error) {
+          console.error(error);
+        }
+        this.isLoading = false;
+      }
+    },
+    template: `
+      <div>
+        <form @submit.prevent="onSubmit">
+          <label for="start">Start:</label>
+          <input id="start" v-model="start" type="number" />
+      
+          <label for="count">Count:</label>
+          <input id="count" v-model="count" type="number" />
+      
+          <button type="submit">Submit</button>
+        </form>
+        <div v-if="isLoading">
+          <p>Loading...</p>
+        </div>
+        <ul v-else-if="results.length > 0">
+          <li v-for="result in results" :key="result">{{ result }}</li>
+        </ul>
+      </div>
+    `
+  });
+  </script>
+
+<style>
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 200px;
+      margin: 0 auto;
+      background-color: #ff0099;
+      border-radius: 20px;
+      padding: 20px;
+    }
+    
+    label {
+      color: white;
+      font-family: "Comic Sans MS", sans-serif;
+      margin-bottom: 5px;
+    }
+    
+    input {
+      padding: 5px;
+      margin-bottom: 10px;
+      background-color: white;
+      border: none;
+      color: #ff0099;
+      font-family: "Comic Sans MS", sans-serif;
+    }
+    
+    button {
+      padding: 5px 10px;
+      background-color: #ff0099;
+      border: none;
+      color: white;
+      font-family: "Comic Sans MS", sans-serif;
+      cursor: pointer;
+    }
+    
+    p {
+      color: white;
+      font-family: "Comic Sans MS", sans-serif;
+    }
+    
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    li {
+      list-style: none;
+      margin: 10px;
+      padding: 10px;
+      background-color: white;
+      color: #ff0099;
+      font-family: "Comic Sans MS", sans-serif;
+      border-radius: 10px;
+    }
+    </style>
+
+
+</body>
+</html>
